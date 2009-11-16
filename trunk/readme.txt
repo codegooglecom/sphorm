@@ -1,3 +1,8 @@
+[Requirements]
+ - PHP 5.2.x
+ - MySQL (for now)
+ - PDO & PDO_MYSQL
+
 [Installation]
  - Download latest stable/unstable release.
  - Unpack to a desirable directory.
