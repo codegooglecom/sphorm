@@ -9,7 +9,12 @@ class User extends Sphorm {
 		),
 		'columns' => array(
 			'name' => 'UserName',
-			'age' => 'UserAge'
+			'age' => array(
+						'name' => 'UserAge',
+						'type' => 'int(11)',
+						'default' => 18,
+						'nullable' => false
+					)
 		)
 	);
 	
