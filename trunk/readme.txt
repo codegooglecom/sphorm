@@ -1,6 +1,6 @@
 [Installation]
- - Download latest release
- - Unpack to a desired directory
+ - Download latest stable/unstable release.
+ - Unpack to a desired directory.
  - Check samples dir with some examples.
  - Have fun!
 
