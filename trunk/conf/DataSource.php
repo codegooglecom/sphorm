@@ -6,7 +6,8 @@ class DataSource {
 		'port' => 3306,
 		'schema' => 'default-db',
 		'username' => 'root',
-		'password' => ''
+		'password' => '',
+		'dbCreate' => 'update' // one of 'create', 'create-drop','update'
 		);
 
 		static $development = array(
