@@ -1,3 +1,8 @@
-Thank you for using sphorm.
+[Installation]
+ - Download latest release
+ - Unpack to a desired directory
+ - Check samples dir with some examples.
+ - Have fun!
 
-More will come later... 
+  Thank you for using sphorm!
+ 
