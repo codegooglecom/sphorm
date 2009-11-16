@@ -70,6 +70,10 @@ class Db {
 		$sth = $this->executePrepared($sql . ' LIMIT 1', $params);
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		
+		if (empty($row)) {
+			return null;
+		}
+		
 		$obj = new $this->clazz();
 		foreach ($row as $column => $val) {
 			$obj->setWithColumnCheck($column, $val);
