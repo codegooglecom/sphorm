@@ -22,7 +22,7 @@ class Sphorm {
 			self::$reflectors[$this->clazz] = new ReflectionClass($this->clazz);
 		}
 
-		$this->db = new Db(new DataSource(), $this->clazz, true);
+		$this->db = new Db(DataSource::getSettings(SPHORM_ENV), $this->clazz, true);
 		$this->loadStaticFields();
 
 		if (isset($this->mapping['table'])) {

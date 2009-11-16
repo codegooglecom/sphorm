@@ -1,10 +1,41 @@
 <?php
 class DataSource {
-	public $engine = 'mysql';
-	public $host = 'localhost';
-	public $port = 3306;
-	public $schema = 'schema';
-	public $username = 'user';
-	public $password = '';
+	static $default = array(
+		'engine' => 'mysql',
+		'host' => 'localhost',
+		'port' => 3306,
+		'schema' => 'default-db',
+		'username' => 'root',
+		'password' => ''
+		);
+
+		static $development = array(
+		'schema' => 'dev-db',
+		'username' => 'root',
+		'password' => ''
+		);
+
+		static $test = array(
+		'schema' => 'test-db',
+		'username' => 'root',
+		'password' => ''
+		);
+
+		static $production = array(
+		'schema' => 'prod-db',
+		'username' => 'root',
+		'password' => ''
+		);
+
+		public static function getSettings($env = 'development') {
+			if ($env == 'production') {
+				return array_merge(self::$default, self::$production);
+			} else if ($env == 'test') {
+				return array_merge(self::$default, self::$test);
+			} else {
+				return array_merge(self::$default, self::$development);
+			}
+		}
 }
+
 ?>

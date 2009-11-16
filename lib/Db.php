@@ -5,11 +5,11 @@ class Db {
 	private $clazz;
 	private $debug;
 
-	public function __construct(DataSource $ds, $clazz, $debug = false) {
+	public function __construct($ds, $clazz, $debug = false) {
 		$this->clazz = $clazz;
 		$this->debug = $debug;
 		try {
-			$this->pdoDb = new PDO('mysql:host=' . $ds->host . ';dbname=' . $ds->schema, $ds->username, $ds->password);
+			$this->pdoDb = new PDO($ds['engine'] . ':host=' . $ds['host'] . ';dbname=' . $ds['schema'], $ds['username'], $ds['password']);
 			$this->connected = true;
 		} catch (PDOException $ex) {
 			//TODO do something here...
