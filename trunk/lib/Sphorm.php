@@ -8,6 +8,7 @@ class Sphorm {
 	private $clazz;
 	private $table;
 	private $dirty;
+	private $ds;
 
 	// TODO make these static arrays
 	private $mapping;
@@ -17,12 +18,12 @@ class Sphorm {
 	public function __construct($init = array()) {
 		$this->clazz = get_class($this);
 		$this->dirty = false;
+		$this->ds = DataSource::getSettings(SPHORM_ENV);
 
 		if (!isset(self::$reflectors[$this->clazz])) {
 			self::$reflectors[$this->clazz] = new ReflectionClass($this->clazz);
 		}
 
-		$this->db = new Db(DataSource::getSettings(SPHORM_ENV), $this->clazz, true);
 		$this->loadStaticFields();
 
 		if (isset($this->mapping['table'])) {
@@ -39,6 +40,10 @@ class Sphorm {
 				$this->data[$key] = $val;
 			}
 		}
+
+		$this->db = new Db($this->ds, $this->clazz, $this->table, true);
+
+		$this->createOrUpdateDbModel();
 	}
 
 	public function __get($key) {
@@ -141,7 +146,11 @@ class Sphorm {
 		}
 
 		if (isset($this->mapping['columns'][$name])) {
-			return $this->mapping['columns'][$name];
+			if (is_array($this->mapping['columns'][$name])) {
+				return $this->mapping['columns'][$name]['name']; 
+			} else {
+				return $this->mapping['columns'][$name];
+			}
 		}
 		return $name;
 	}
@@ -178,10 +187,14 @@ class Sphorm {
 	 */
 
 	public static function init() {
-		foreach (Beans::$beans as $clazz) {
-			if (!function_exists($clazz)) {
-				eval('function ' . $clazz . '() {return Sphorm::getStaticEntity("' . $clazz . '");}');
+		if (!empty(Beans::$beans)) {
+			foreach (Beans::$beans as $clazz) {
+				if (!function_exists($clazz)) {
+					eval('function ' . $clazz . '() {return Sphorm::getStaticEntity("' . $clazz . '");}');
+				}
 			}
+		} else {
+			echo 'Warning: No beans where defined';
 		}
 	}
 
@@ -193,6 +206,45 @@ class Sphorm {
 		return self::$loadedClasses[$clazz];
 	}
 
+	private function createOrUpdateDbModel() {
+		
+		if ($this->ds['dbCreate'] == 'create-drop') {
+			$this->db->dropTable();
+			
+			$id = array(
+				'name' => $this->mapping['id']['column']
+			);
+			
+			
+			$columns = array();
+			foreach ($this->mapping['columns'] as $c) {
+				if (!is_array($c)) {
+					$arr = array(
+						name => $c
+					);
+				} else {
+					$arr = array(
+					'name' => $c['name']
+					);
+
+					if (isset($c['type'])) {
+						$arr['type'] = $c['type'];
+					}
+
+					if (isset($c['nullable'])) {
+						$arr['nullable'] = $c['nullable'];
+					}
+
+					if (isset($c['default'])) {
+						$arr['default'] = $c['default'];
+					}
+				}
+				$columns[] = $arr;
+			}
+			
+			$this->db->createTable($id, $columns);
+		}
+	}
 
 	/**
 	 *		Methods
@@ -284,7 +336,7 @@ class Sphorm {
 
 	public function delete() {
 		if ($this->exists()) {
-				
+
 			/**
 			 * cascade delete
 			 */
