@@ -18,6 +18,9 @@ class User extends Sphorm {
 		)
 	);
 	
+	/**
+	 * Do NOT change this.
+	 */
 	public function __construct(array $init = array()) {
 		parent::__construct($init);
 	}
