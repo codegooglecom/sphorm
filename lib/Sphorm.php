@@ -9,10 +9,12 @@ class Sphorm {
 	private $table;
 	private $dirty;
 
+	// TODO make these static arrays
 	private $mapping;
 	private $hasOne;
+	private $hasMany;
 
-	public function __construct(array $init = array()) {
+	public function __construct($init = array()) {
 		$this->clazz = get_class($this);
 		$this->dirty = false;
 
@@ -51,6 +53,15 @@ class Sphorm {
 					return $this->data[$key];
 				}
 			}
+
+			// same thing for children...
+			if ($this->hasMany != null) {
+				if (isset($this->hasMany[$key])) {
+					$clazz = $this->hasMany[$key]['type'];
+					$this->data[$key] = $clazz()->findAll(array($this->hasMany[$key]['join'] => $this->id));
+					return $this->data[$key];
+				}
+			}
 		}
 
 		return null;
@@ -80,7 +91,29 @@ class Sphorm {
 	}
 
 	public function __call($name, $arguments) {
-		throw new Exception('Unsupported operation: ' . $name);
+		$pos = strpos($name, 'addTo');
+		if ($pos === false) {
+			throw new Exception('Unsupported operation: ' . $name);
+		} else {
+			$propName = substr($name, 5);
+			//lcfirst is in 5.3
+			//$propNameLower = lcfirst($propName);
+			$propNameLower = $propName;
+			$propNameLower{0} = strtolower($propNameLower{0});
+
+			if (!isset($this->data[$propName]) && !isset($this->data[$propNameLower])) {
+				$propName = $propNameLower;
+			}
+
+			//should load from db if needed...
+			$arr = $this->$propName;
+			if (!is_array($arr)) {
+				$arr = array();
+			}
+
+			$this->data[$propName] = array_merge($arr, $arguments);
+			$this->dirty = true;
+		}
 	}
 
 	public function setWithColumnCheck($name, $value) {
@@ -94,7 +127,6 @@ class Sphorm {
 				}
 			}
 		}
-			
 		$this->data[$name] = $value;
 	}
 
@@ -126,6 +158,14 @@ class Sphorm {
 		if ($this->hasOne == null) {
 			try {
 				$this->hasOne = self::$reflectors[$this->clazz]->getStaticPropertyValue('hasOne');
+			} catch (ReflectionException $ex) {
+				//nothing
+			}
+		}
+
+		if ($this->hasMany == null) {
+			try {
+				$this->hasMany = self::$reflectors[$this->clazz]->getStaticPropertyValue('hasMany');
 			} catch (ReflectionException $ex) {
 				//nothing
 			}
@@ -182,6 +222,13 @@ class Sphorm {
 					continue;
 				}
 			}
+
+			if ($this->hasMany != null) {
+				if (isset($this->hasMany[$key])) {
+					//skip it
+					continue;
+				}
+			}
 			$body .= $this->getColumnName($key) . "='" . $val . "', ";
 		}
 		$body = substr($body, 0, -2);
@@ -200,7 +247,6 @@ class Sphorm {
 		 */
 		// brothers
 		if ($this->hasOne != null) {
-
 			foreach ($this->hasOne as $key => $val) {
 				$brother = $this->$key;
 				if ($brother != null) {
@@ -216,7 +262,22 @@ class Sphorm {
 		}
 
 		// children
-		//TODO
+		if ($this->hasMany != null) {
+			foreach ($this->hasMany as $key => $val) {
+				$children = $this->$key;
+				if ($children != null && is_array($children)) {
+					foreach ($children as $child) {
+						//add FK if not specified...
+						$props = $child->getColumns(true);
+						if (!isset($props[$val['join']])) {
+							$child->$val['join'] = $this->id;
+						}
+						//TODO check if was saved...
+						$child->save();
+					}
+				}
+			}
+		}
 
 		return $myRet;
 	}
@@ -241,6 +302,25 @@ class Sphorm {
 					}
 				}
 			}
+
+			//children
+			if ($this->hasMany != null) {
+				foreach ($this->hasMany as $key => $val) {
+					$children = $this->$key;
+					if ($children != null && is_array($children)) {
+						foreach ($children as $child) {
+							//add FK if not specified...
+							$props = $child->getColumns(true);
+							if (!isset($props[$val['join']])) {
+								$child->$val['join'] = $this->id;
+							}
+							//TODO check if was saved...
+							echo (int)$child->delete();
+						}
+					}
+				}
+			}
+
 
 			$sql = 'DELETE FROM ' . $this->table . ' WHERE ' . $this->getColumnName('id') . '=' . $this->id;
 			return $this->db->execute($sql);
@@ -298,7 +378,11 @@ class Sphorm {
 		if (count($recs) == 1 && $n == 1) {
 			return $recs[0];
 		} else {
-			return $recs;
+			if (empty($recs)) {
+				return null;
+			} else {
+				return $recs;
+			}
 		}
 	}
 
@@ -341,6 +425,7 @@ class Sphorm {
 		}
 
 		$sql = 'SELECT * FROM ' . $this->table . ' WHERE ';
+
 		$finalParams = array();
 		foreach ($params as $key => $val) {
 			if (is_array($val)) {
