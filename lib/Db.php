@@ -3,10 +3,12 @@ class Db {
 	private $pdoDb = null;
 	private $connected = false;
 	private $clazz;
+	private $table;
 	private $debug;
 
-	public function __construct($ds, $clazz, $debug = false) {
+	public function __construct($ds, $clazz, $table, $debug = false) {
 		$this->clazz = $clazz;
+		$this->table = $table;
 		$this->debug = $debug;
 		try {
 			$this->pdoDb = new PDO($ds['engine'] . ':host=' . $ds['host'] . ';dbname=' . $ds['schema'], $ds['username'], $ds['password']);
@@ -83,7 +85,7 @@ class Db {
 	}
 
 	public function getOneField($sql, $params, $field) {
-		$sth = $this->executePrepared($sql . 'LIMIT 1', $params);
+		$sth = $this->executePrepared($sql . ' LIMIT 1', $params);
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
 		return $row[$field];
 	}
@@ -107,6 +109,52 @@ class Db {
 		} else {
 			return true;
 		}
+	}
+	
+	public function dropTable() {
+		return $this->execute('DROP TABLE IF EXISTS ' . $this->table);
+	}
+	
+	public function createTable(array $id, array $columns, array $index = array()) {
+		if (empty($columns) || empty($id)) {
+			trigger_error('id or columns data is empty, cannot create table.', E_USER_WARNING);
+			return;
+		}
+	
+		$sql = 'CREATE TABLE ' . $this->table . ' (';
+		$sql .= $id['name'] . ' int(11) NOT NULL AUTO_INCREMENT,';
+		
+		foreach ($columns as $c) {
+			if (!isset($c['name'])) {
+				throw new Exception('No column name specified, cannot create table.');
+			}
+			
+			$type = 'VARCHAR(255)';
+			$nullable = '';
+			$default = '';
+			
+			if (isset($c['type'])) {
+				$type = $c['type'];
+			}
+			
+			if (isset($c['nullable'])) {
+				if ($c['nullable'] === false) {
+					$nullable = 'NOT NULL';
+				} 
+			}
+			
+			if (isset($c['default'])) {
+				$default = $c['default'];
+			}
+			
+			//check for int's default value
+			
+			$sql .= $c['name'] . ' ' . $type . ' ' . $nullable . ' DEFAULT ' . "'" . $default . "',";
+		}
+		$sql .= 'PRIMARY KEY (' . $id['name'] .')';
+		$sql .= ') ENGINE=MyISAM DEFAULT CHARSET=utf8';
+		
+		return $this->execute($sql);
 	}
 
 }
