@@ -1,10 +1,15 @@
 Q: What's sphorm?
+
 A: Simple PHP ORM
 
+
 Q: Why?
+
 A: Inspired by other dynamic languages, we want to bring fun to PHP world.
 
+
 Q: It's a small project, do you really need 4 numbers in sphorm's version?
+
 A: So far we think that Yes. They mean:
   * major - some major changes, perhaps rewritten most of it (not planned soon)
   * minor - new features for some specific tasks probably. Expect API changes.
