@@ -1,15 +1,12 @@
 Q: What's sphorm?<br>
 A: Simple PHP ORM<br>
-<br>
 
 Q: Why?<br>
 A: Inspired by other dynamic languages, we want to bring fun to PHP world.<br>
-<br>
 
-Q: It's a small project, do you really need 4 numbers in sphorm's version?
-
+Q: It's a small project, do you really need 4 numbers in sphorm's version?<br>
 A: So far we think that Yes. They mean:
   * major - some major changes, perhaps rewritten most of it (not planned soon)
   * minor - new features for some specific tasks probably. Expect API changes.
   * micro - improvements, cleanups. No API change.
-  * bugfix - bug fixes. Instead of making a cumulative release, there would be many smaller.
+  * bugfix - bug fixes. Instead of making a cumulative release, there would be many smaller.<br>
