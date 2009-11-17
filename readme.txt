@@ -10,10 +10,11 @@
  - Change [sphorm-install-dir]/conf/DataSource.php 
  - List _all_ your beans/classes to [sphorm-install-dir]/conf/Beans.php file. See a sample inside.
  - Copy _all_ your domain classes to [sphorm-install-dir]/domains or define your own path using SPHORM_DOMAIN_DIR const.
- - _all_ your domain classes should be 1 class per 1 file. Filename should be the same as class name (by default). 
-   If you want custom filenaming, change define your own SPHORM_DOMAIN_PATTERN const.
+ - _all_ your domain classes should be 1 class per 1 file. By default filename should be the same as class name. 
+   If you want custom filenaming, change define your own SPHORM_DOMAIN_PATTERN constant. In this case filename is not
+   required to be the same as class name.
  - Check samples dir with for more examples.
- - Have fun!
-
+ 
+  
   Thank you for using sphorm!
  
