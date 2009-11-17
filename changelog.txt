@@ -1,3 +1,11 @@
+sphorm 1.0.0.0-beta2 (released 2009-11-16)
+ - Fixed bug with *->count()
+ - Added 'dbCreate' property to datasource class (ex: 'create-drop' will drop & generate tables based on mappings provided).
+ - Refactored the way domain classes are included. No need to include them all, just define SPHORM_DOMAIN_DIR const which
+   points to directory with all your domains.
+ - Added SPHORM_DOMAIN_PATTERN, which determines filenames pattern for your classes (ex: {clazz}.php will try to find User.php, Book.php).
+ - Added optional types for columns defined in $mapping. If not specified VARCHAR(255) is used. (Used for now by db generation/creation). 
+ 
 sphorm 1.0.0.0-beta1 (released 2009-11-15)
  - 1st release as beta.
  - Added installation instructions.
