@@ -1,16 +1,27 @@
 <?php
 require "[path-to-sphorm-dir]/inc.php";
 
-require "[path-to-your-class]/User.php";
+/**
+ * At this point, all your domain classes should be in [sphorm-install-dir]/domains
+ * Filenames for your domain classes should look like: '$ClassName.php' (w/o quotes)
+ * 
+ * Note: these are default values, which can be customized (check samples dir).
+ */
 
 /**
- * User() is a PHP function!
+ * Assuming you added User bean in [sphorm-install-dir]/conf/Beans.php
+ * 
+ * and
+ * 
+ * Copied User.php in [sphorm-install-dir]/domains you can:
+ * 
  */
 
 
 /**
- * Reading DB
+ * User() is available to you to be used as you refer to User domain, _not_ particular instance
  */
+
 
 /**
  * Counts the number of instances in the database and returns the result
@@ -50,10 +61,6 @@ $foundOneUser = User()->find(array('name'=>'John'));
 $foundUsers = User()->findAll(array('name'=>'John'));
 
 
-
-/**
- * Writing to BD
- */
 
 /**
  * Create new instance
