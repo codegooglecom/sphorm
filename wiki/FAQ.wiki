@@ -1,4 +1,3 @@
-
-= FAQ =
 Q: What's sphorm ?
+
 A: Simple PHp ORM
