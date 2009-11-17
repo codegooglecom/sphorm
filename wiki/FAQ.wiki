@@ -1,12 +1,10 @@
-Q: What's sphorm?
+Q: What's sphorm?<br>
+A: Simple PHP ORM<br>
+<br>
 
-A: Simple PHP ORM
-
-
-Q: Why?
-
-A: Inspired by other dynamic languages, we want to bring fun to PHP world.
-
+Q: Why?<br>
+A: Inspired by other dynamic languages, we want to bring fun to PHP world.<br>
+<br>
 
 Q: It's a small project, do you really need 4 numbers in sphorm's version?
 
