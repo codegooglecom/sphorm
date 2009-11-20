@@ -1,8 +1,13 @@
 #summary Sphorm quick start guide
 
-= Quick Start =
+<wiki:toc max_depth="1" />
 
-  # [Installation Install sphorm]
-  # [Configuration Configuration]
-  # [Examples Check examples]
-  # 
+= Installation =
+asdsad
+
+= Configuration =
+
+All sphorm config files are located in _SPHORM_HOME_/conf directory.
+Config files are 
+
+ 
