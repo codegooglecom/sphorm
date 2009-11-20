@@ -3,7 +3,7 @@
 /**
  * Assuming that sphorm is installed and configured.
  * 
- * Followinf examples are Based on definitions from:
+ * These examples are Based on definitions from:
  *  - mapping_one_to_one.php
  *  - mapping_one_to_many.php
  */
@@ -48,10 +48,10 @@ $user = User()->get(1);
  * This will trigger lazy loading and load _all_ addresses for user 1
  * It will contain an array of Address instances.
  */
-$user->address;
-// of 
+$user->addresses;
+// or
 foreach ($user->addresses as $addr) {
-	// do some stuff with address
+	// do some stuff with address $addr
 } 
 
 ?>
