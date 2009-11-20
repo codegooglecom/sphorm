@@ -1,7 +1,3 @@
 #summary Sphorm online documentation
 
-* [Installation Installation]
-
-* [QuickStart Quick Start]
-
-* [UserGuide User Guide]
+Soon...
