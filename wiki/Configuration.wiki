@@ -1,0 +1,5 @@
+#summary Sphorm configuration
+
+= Configuration =
+
+All sphorm config files are located in _SPHORM_HOME_/conf directory.
