@@ -22,6 +22,6 @@ All sphorm config files are located in _SPHORM_HOME_/conf directory. So far ther
 
  `Config.php` - core settings that determine Sphorm behavior (in progress...)
 
-
-
+= Start using sphorm =
+To start using Sphorm, you need to extend Sphorm class and add a constructor to your class, that will delegate request to base class (see samples dir for examples)
  
