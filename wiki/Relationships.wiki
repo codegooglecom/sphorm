@@ -16,5 +16,33 @@ static $hasOne = array(
 	);
 }}} 
 
+You can have as many brothers as you want:
+{{{
+static $hasOne = array(
+	  'profile' => array(                 
+		'type' => 'Profile',          
+		'join' => 'ProfileUserID'     
+	   ),
+          'otherProperty' => array(                 
+		'type' => 'OtherClass',          
+		'join' => 'OtherCOlumnId'     
+	   ),
+          ....
+	);
+}}}
 
 = One to Many =
+To define an One to Many relationship you have to make usage of 'hasMany' property:
+{{{
+static $hasMany = array(
+		'addresses' => array(                  // $obj->addresses
+			'type' => 'Address',           // array of Address instances  
+			'join' => 'AddressUserID'      // same as for one to one
+		),
+	);
+}}}
+
+
+= Requirements/Limitations =
+ # In all cases brothers or children have to be Sphorm domain classes too (extend Sphorm).
+ # Brothers or childre are ALWAYS loaded lazy...aka they will be loaded on 1st access
