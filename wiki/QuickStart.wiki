@@ -14,9 +14,12 @@
 
 = Configuration =
 
-All sphorm config files are located in _SPHORM_HOME_/conf directory. So far there are 3 files: `DataSource.php`, `Beans.php`, `Config.php`<br><br>
+All sphorm config files are located in _SPHORM_HOME_/conf directory. So far there are 3 files: `DataSource.php`, `Beans.php`, `Config.php`
+
  `DataSource.php` - contains database related settings. Currently it supports 3 environments: development, test, production
+
  `Beans.php` - contains all beans/classes you want to have Sphorm capabilities.
+
  `Config.php` - core settings that determine Sphorm behavior (in progress...)
 
 
