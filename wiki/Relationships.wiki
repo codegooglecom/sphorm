@@ -1,0 +1,20 @@
+#summary Brief description how table relationships are supported
+
+= Introduction =
+
+Currently sphorm supports: One to One, One to Many relationships, unidirectional. Yes, in near future there will be more. 
+
+
+= One to One =
+To be able to use One to One relationship, you need to let know Sphorm who is your domain's brother. In this case you need to add a static array, named 'hasOne' like this:
+{{{
+static $hasOne = array(
+	  'profile' => array(                 // property name, $obj->profile
+		'type' => 'Profile',          // it's type, $obj->profile = new Profile()
+		'join' => 'ProfileUserID'     // Join column, aka FK
+	  )
+	);
+}}} 
+
+
+= One to Many =
