@@ -11,3 +11,6 @@ A: So far we think that Yes. They mean:
   * minor - new features for some specific tasks probably. Expect API changes.
   * micro - improvements, cleanups. No API change.
   * bugfix - bug fixes. Instead of making a cumulative release, there would be many smaller.<br>
+
+Q: How can I contribute?<br>
+A: Use sphorm and give us your feedback. Bug reports, suggestions are always welcome. 
