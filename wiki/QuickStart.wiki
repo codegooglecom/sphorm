@@ -27,5 +27,5 @@ All sphorm config files are located in _SPHORM_HOME_/conf directory. So far ther
 To start using Sphorm, you need to extend Sphorm class and add a constructor to your class, that will delegate request to base class (see samples dir for examples)
 
 = What next? =
-Check the samples directory that comes with sphorm package, it will contain many samples that would help you to understand better 
+Check the samples directory that comes with sphorm package, it will contain many samples that would help you to get most of sphorm. And of course, HAVE FUN!
  
