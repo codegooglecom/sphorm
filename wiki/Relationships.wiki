@@ -44,5 +44,5 @@ static $hasMany = array(
 
 
 = Requirements/Limitations =
- # In all cases brothers or children have to be Sphorm domain classes too (extend Sphorm).
+ # In all cases brothers or children have to be Sphorm domain classes (extend Sphorm).
  # Brothers or childre are ALWAYS loaded lazy...aka they will be loaded on 1st access
