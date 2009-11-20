@@ -2,7 +2,7 @@
 
 = Quick Start =
 
-  # [Instlalltion Install sphorm]
+  # [Installation Install sphorm]
   # [Configuration Configuration]
   # [Examples Check examples]
   # 
