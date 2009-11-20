@@ -83,14 +83,10 @@ $success = $newUser->save();
 /**
  * Delete
  */
-$badUser = User()->get(666);
+$badUser = User()->get(567);
 if ($badUser != null) {
 	$badUser->delete();
 }
 
-
-/**
- * To be continued...
- */
 
 ?>
