@@ -2,7 +2,7 @@
 
 Lets assume we have already defined our [UserDomainBasic User] domain.
 
-Get all users (when we say all this means ALL of them):
+Get all users:
 {{{
 $users = User()->all();
 }}}
@@ -51,7 +51,6 @@ Find users:
 {{{
 // first match
 $foundOneUser = User()->find(array('name'=>'John', ...));
-
 
 // all matches
 $foundUsers = User()->findAll(array('name'=>'John', ...));
