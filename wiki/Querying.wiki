@@ -1,4 +1,5 @@
 #summary All about how to search/query your tables.
+#labels Featured
 
 Lets assume we have already defined our [UserDomainBasic User] domain.
 
