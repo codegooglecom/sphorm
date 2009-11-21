@@ -34,7 +34,7 @@ Count users with parameters:
 //tbd...
 }}}
 
-Getting by `id`:
+Getting user(s) by id(s):
 {{{
 // only one
 $oneUser = User()->get(1024); 
