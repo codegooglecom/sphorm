@@ -1,4 +1,4 @@
-sphorm 1.0.0.0-beta3 (released 2009-11-16)
+sphorm 1.0.0.0-beta3 (released 2009-11-20)
  - Implemented count by parameters
  - Added max,order,offset params to findAll
  - Added new setting 'saveStrategy' which determines how to handle undefined  columns
