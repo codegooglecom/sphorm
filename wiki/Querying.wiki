@@ -55,4 +55,7 @@ $foundOneUser = User()->find(array('name'=>'John', ...));
 
 // all matches
 $foundUsers = User()->findAll(array('name'=>'John', ...));
+
+// all matches with parameters (same as for all)
+$users = User()->findAll(array('name' => 'Test'), array('max' => 4, 'offset' => 2, 'order' => array ('desc' => 'id')));
 }}}
