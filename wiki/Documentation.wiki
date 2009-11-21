@@ -1,5 +1,5 @@
 #summary Sphorm online documentation
 
-[Installation Installation]
-
-[Relationships Relationships]
+ * [Installation Installation]
+ * [Querying Querying]
+ * [Relationships Relationships]
