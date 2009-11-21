@@ -1,3 +1,29 @@
-
 All about how to search/query your tables.
 
+Lets assume we have a `User.php` as following:
+{{{
+<?php
+class User extends Sphorm {
+	// mapping
+	static $mapping = array(
+		'table' => 'users',
+		'id' => array(
+			'column'=> 'UserID',
+			'generator' => 'auto'
+		),
+		columns => array(
+			'name' => 'UserName',
+			'age' => 'UserAge'
+		)
+	);
+	
+	public function __construct(array $init = array()) {
+		parent::__construct($init);
+	}
+}
+}}}
+
+Get all instances of your class:
+{{{
+
+}}}
