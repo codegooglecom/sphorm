@@ -31,7 +31,7 @@ $total = User()->count();
 
 Count users with parameters:
 {{{
-//tbd...
+$total = User()->count(array('name'=>'John', ...));
 }}}
 
 Getting user(s) by id(s):
