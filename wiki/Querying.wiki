@@ -1,7 +1,5 @@
 #summary All about how to search/query your tables.
 
-All about how to search/query your tables.
-
 Lets assume we have already defined our [UserDomainBasic User] domain.
 
 Get all users (when we say all this means ALL of them):
