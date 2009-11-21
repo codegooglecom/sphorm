@@ -1,6 +1,6 @@
 All about how to search/query your tables.
 
-Lets assume we have a `User.php` as following:
+Lets assume we have followinf `User` domain class:
 {{{
 <?php
 class User extends Sphorm {
