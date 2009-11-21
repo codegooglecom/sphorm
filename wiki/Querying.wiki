@@ -1,6 +1,6 @@
 All about how to search/query your tables.
 
-Lets assume we have followinf `User` domain class:
+Lets assume we have following `User` domain class:
 {{{
 <?php
 class User extends Sphorm {
@@ -23,7 +23,15 @@ class User extends Sphorm {
 }
 }}}
 
-Get all instances of your class:
+Get all users (when we say all this means ALL of them):
 {{{
+$users = User()->all();
+}}}
+
+Get all users customized:
+{{{
+//max 10
+$users = User()->all(array('max' => 10));
+
 
 }}}
