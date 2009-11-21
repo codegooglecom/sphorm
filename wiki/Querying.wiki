@@ -7,10 +7,21 @@ Get all users (when we say all this means ALL of them):
 $users = User()->all();
 }}}
 
-Get all users customized:
+Get all users with parameters:
+ * max
+ * order
+ * offset
 {{{
-//max 10
+// max 10
 $users = User()->all(array('max' => 10));
 
+// max 10 with offset
+$users = User()->all(array('max' => 10, 'offset' => 20));
+
+// order by name
+$users = User()->all(array('order' => 'name'));
+
+// order by name desc
+$users = User()->all(array('order' => array('desc' => 'name')));
 
 }}}
