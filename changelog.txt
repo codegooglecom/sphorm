@@ -1,3 +1,8 @@
+sphorm 1.0.0.0-beta3 (released 2009-11-16)
+ - Implemented count by parameters
+ - Added max,order,offset params to findAll
+ - Added new setting 'saveStrategy' which determines how to handle undefined  columns
+
 sphorm 1.0.0.0-beta2 (released 2009-11-16)
  - Fixed bug with *->count()
  - Added 'dbCreate' property to datasource class (ex: 'create-drop' will drop & generate tables based on mappings provided).
