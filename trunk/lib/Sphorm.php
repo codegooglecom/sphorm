@@ -2,6 +2,7 @@
 class Sphorm {
 	private static $loadedClasses = array();
 	private static $reflectors = array();
+	private static $metaData = array();
 	private $db = null;
 	private $data = array();
 
@@ -14,6 +15,8 @@ class Sphorm {
 	private $mapping;
 	private $hasOne;
 	private $hasMany;
+
+	private $errorMessages = array();
 
 	public function __construct($init = array()) {
 		$this->clazz = get_class($this);
@@ -41,6 +44,12 @@ class Sphorm {
 			}
 		}
 
+		//check if current clazz was defined as a bean
+		$beansAsKeys  =  array_flip(Beans::$beans);
+		if (!isset($beansAsKeys[$this->clazz])) {
+			throw new Exception('Undefined bean ' . $this->clazz . '. Please check Beans.php');
+		}
+
 		$this->db = new Db($this->ds, $this->clazz, $this->table, true);
 
 		$this->createOrUpdateDbModel();
@@ -50,10 +59,16 @@ class Sphorm {
 		if (isset($this->data[$key])) {
 			return $this->data[$key];
 		} else {
+			$beansAsKeys  =  array_flip(Beans::$beans);
+
 			//lazy load brother if there are any...
 			if ($this->hasOne != null) {
 				if (isset($this->hasOne[$key])) {
 					$clazz = $this->hasOne[$key]['type'];
+					if (!isset($beansAsKeys[$clazz])) {
+						throw new Exception('Attempt to reference a non sphorm class (one to one). Was "' . $clazz . '" defined?.');
+					}
+
 					$this->data[$key] = $clazz()->find(array($this->hasOne[$key]['join'] => $this->id));
 					return $this->data[$key];
 				}
@@ -63,6 +78,9 @@ class Sphorm {
 			if ($this->hasMany != null) {
 				if (isset($this->hasMany[$key])) {
 					$clazz = $this->hasMany[$key]['type'];
+					if (!isset($beansAsKeys[$clazz])) {
+						throw new Exception('Attempt to reference a non sphorm class (one to many). Was "' . $clazz . '" defined?.');
+					}
 					$this->data[$key] = $clazz()->findAll(array($this->hasMany[$key]['join'] => $this->id));
 					return $this->data[$key];
 				}
@@ -147,7 +165,7 @@ class Sphorm {
 
 		if (isset($this->mapping['columns'][$name])) {
 			if (is_array($this->mapping['columns'][$name])) {
-				return $this->mapping['columns'][$name]['name']; 
+				return $this->mapping['columns'][$name]['name'];
 			} else {
 				return $this->mapping['columns'][$name];
 			}
@@ -181,7 +199,6 @@ class Sphorm {
 		}
 	}
 
-
 	/**
 	 *		Core
 	 */
@@ -194,7 +211,7 @@ class Sphorm {
 				}
 			}
 		} else {
-			echo 'Warning: No beans where defined';
+			trigger_error('No beans where defined', E_USER_WARNING);
 		}
 	}
 
@@ -207,20 +224,20 @@ class Sphorm {
 	}
 
 	private function createOrUpdateDbModel() {
-		
-		if ($this->ds['dbCreate'] == 'create-drop') {
-			$this->db->dropTable();
-			
+		if ($this->ds['dbCreate'] == 'create-drop' || $this->ds['dbCreate'] == 'create') {
+			if ($this->ds['dbCreate'] == 'create-drop') {
+				$this->db->dropTable();
+			}
+
 			$id = array(
 				'name' => $this->mapping['id']['column']
 			);
-			
-			
+
 			$columns = array();
 			foreach ($this->mapping['columns'] as $c) {
 				if (!is_array($c)) {
 					$arr = array(
-						name => $c
+					name => $c
 					);
 				} else {
 					$arr = array(
@@ -241,16 +258,71 @@ class Sphorm {
 				}
 				$columns[] = $arr;
 			}
-			
+
 			$this->db->createTable($id, $columns);
 		}
 	}
+
+
+	private function getRealColumns() {
+		$columns = array();
+		foreach ($this->data as $key => $val) {
+			if ($key == 'id' && $this->mapping['id']['generator'] != 'auto') {
+				throw new Exception('Unsupported ID generator.');
+			}
+
+			if (isset($this->hasOne[$key]) || isset($this->hasMany[$key])) {
+				continue;
+			}
+
+			$columns[$this->getColumnName($key)] = $val;
+		}
+
+		return $columns;
+	}
+
+	//check if it has to fail early... otherwise will pass the ball of ignorance
+	public function checkDDL() {
+		$settings = Config::getSettings(SPHORM_ENV);
+
+		if ($settings['saveStrategy'] != 'no-checking') {
+			//load meta data
+			if (!isset(self::$metaData[$this->clazz])) {
+				self::$metaData[$this->clazz] = array();
+				$meta = $this->db->getMetaData();
+
+				foreach ($meta as $c) {
+					self::$metaData[$this->clazz][$c['Field']] = $c;
+				}
+			}
+
+			// will deal later with this...
+			if ($settings['saveStrategy'] == 'ignore-undefined') {
+				return true;
+			}
+
+			// column names are keys
+			foreach ($this->getRealColumns() as $c => $val) {
+				if ($settings['saveStrategy'] == 'halt-on-undefined' && !isset(self::$metaData[$this->clazz][$c])) {
+					throw new Exception('Column "' . $c . '" is undefined. Stopping.');
+				} else if ($settings['saveStrategy'] == 'alter-on-undefined') {
+					//alter table
+					throw new Exception('Alter table on demand is not implemented yet.');
+				}
+			}
+		}
+
+		return false;
+	}
+
 
 	/**
 	 *		Methods
 	 */
 
 	public function save() {
+		$ignore = $this->checkDDL();
+
 		$head = 'INSERT INTO';
 		$tail = '';
 		if ($this->exists()) {
@@ -264,24 +336,13 @@ class Sphorm {
 		}
 
 		$body = '';
-		foreach ($this->data as $key => $val) {
-			if ($key == 'id' && $this->mapping['id']['generator'] != 'auto') {
-				throw new Exception('Unsupported ID generator.');
-			}
-			if ($this->hasOne != null) {
-				if (isset($this->hasOne[$key])) {
-					//skip it
-					continue;
-				}
+		foreach ($this->getRealColumns() as $cName => $val) {
+			if ($ignore && !isset(self::$metaData[$this->clazz][$cName])) {
+//				trigger_error('Ignoring undefined column: ' . $cName, E_USER_NOTICE);
+				continue;
 			}
 
-			if ($this->hasMany != null) {
-				if (isset($this->hasMany[$key])) {
-					//skip it
-					continue;
-				}
-			}
-			$body .= $this->getColumnName($key) . "='" . $val . "', ";
+			$body .=  $cName . "='" . $val . "', ";
 		}
 		$body = substr($body, 0, -2);
 
@@ -297,10 +358,12 @@ class Sphorm {
 		/**
 		 * cascade save
 		 */
+
 		// brothers
-		if ($this->hasOne != null) {
+		if (!empty($this->hasOne) && is_array($this->hasOne)) {
 			foreach ($this->hasOne as $key => $val) {
 				$brother = $this->$key;
+
 				if ($brother != null) {
 					//add FK if not specified...
 					$props = $brother->getColumns(true);
@@ -314,7 +377,7 @@ class Sphorm {
 		}
 
 		// children
-		if ($this->hasMany != null) {
+		if (!empty($this->hasMany) && is_array($this->hasMany)) {
 			foreach ($this->hasMany as $key => $val) {
 				$children = $this->$key;
 				if ($children != null && is_array($children)) {
@@ -367,7 +430,7 @@ class Sphorm {
 								$child->$val['join'] = $this->id;
 							}
 							//TODO check if was saved...
-							echo (int)$child->delete();
+							$child->delete();
 						}
 					}
 				}

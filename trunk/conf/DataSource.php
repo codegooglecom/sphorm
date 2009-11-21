@@ -8,35 +8,35 @@ class DataSource {
 		'username' => 'root',
 		'password' => '',
 		'dbCreate' => 'update' // one of 'create', 'create-drop','update'
-		);
+	);
 
-		static $development = array(
-		'schema' => 'dev-db',
+	static $development = array(
+		'schema' => 'phorm-demo',
 		'username' => 'root',
-		'password' => ''
+		'password' => '!123_x'
 		);
 
-		static $test = array(
+	static $test = array(
 		'schema' => 'test-db',
 		'username' => 'root',
 		'password' => ''
 		);
 
-		static $production = array(
+	static $production = array(
 		'schema' => 'prod-db',
 		'username' => 'root',
 		'password' => ''
 		);
 
-		public static function getSettings($env = 'development') {
-			if ($env == 'production') {
-				return array_merge(self::$default, self::$production);
-			} else if ($env == 'test') {
-				return array_merge(self::$default, self::$test);
-			} else {
-				return array_merge(self::$default, self::$development);
-			}
+	public static function getSettings($env = 'development') {
+		if ($env == 'production') {
+			return array_merge(self::$default, self::$production);
+		} else if ($env == 'test') {
+			return array_merge(self::$default, self::$test);
+		} else {
+			return array_merge(self::$default, self::$development);
 		}
+	}
 }
 
 ?>
