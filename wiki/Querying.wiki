@@ -11,6 +11,7 @@ Get all users with parameters:
  * max
  * order
  * offset
+
 {{{
 // max 10
 $users = User()->all(array('max' => 10));
