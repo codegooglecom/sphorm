@@ -23,3 +23,8 @@ $users = User()->all(array('order' => 'name'));
 $users = User()->all(array('order' => array('desc' => 'name')));
 
 }}}
+
+Count all users
+{{{
+$total = User()->count();
+}}}
