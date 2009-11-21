@@ -24,17 +24,17 @@ $users = User()->all(array('order' => array('desc' => 'name')));
 
 }}}
 
-Count all users
+Count all users:
 {{{
 $total = User()->count();
 }}}
 
-Count users with parameters
+Count users with parameters:
 {{{
 //tbd...
 }}}
 
-Getting by `id`
+Getting by `id`:
 {{{
 // only one
 $oneUser = User()->get(1024); 
@@ -45,4 +45,14 @@ $threeUsers = User()->get(1024, 45, 56);
 // identical, just another way to use it.
 $threeUsers = User()->get(array(1024, 45, 56));
 
+}}}
+
+Find users:
+{{{
+// first match
+$foundOneUser = User()->find(array('name'=>'John', ...));
+
+
+// all matches
+$foundUsers = User()->findAll(array('name'=>'John', ...));
 }}}
