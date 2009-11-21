@@ -338,7 +338,7 @@ class Sphorm {
 		$body = '';
 		foreach ($this->getRealColumns() as $cName => $val) {
 			if ($ignore && !isset(self::$metaData[$this->clazz][$cName])) {
-//				trigger_error('Ignoring undefined column: ' . $cName, E_USER_NOTICE);
+				//				trigger_error('Ignoring undefined column: ' . $cName, E_USER_NOTICE);
 				continue;
 			}
 
@@ -527,14 +527,14 @@ class Sphorm {
 				$limit = (int)$params['offset'] . ',' . $limit;
 			}
 
-			//TODO in future make usage of an dialect
+			//TODO in future make usage of a dialect
 			$sql .= ' LIMIT ' . $limit;
 		}
 		return $this->db->getAll($sql);
 	}
 
 	//used by other find* methods
-	private function findGeneric(array $params, $all, $operator = '=') {
+	private function findGeneric(array $params, $all, array $limits, $operator = '=') {
 		if (empty($params)) {
 			return null;
 		}
@@ -551,6 +551,36 @@ class Sphorm {
 		}
 
 		$sql = substr($sql, 0, -5);
+		
+		// TODO review this code.. duplicate from all()
+		if (!empty($limits)) {
+			if (isset($limits['order'])) {
+				$sql .= ' ORDER BY ';
+				if (is_array($limits['order'])) {
+					$arr = array();
+					foreach ($limits['order'] as $dir => $c) {
+						if (strcasecmp($dir, 'desc') == 0 || strcasecmp($dir, 'asc') == 0) {
+							$arr[] = $this->getColumnName($c) . ' ' . strtoupper($dir);
+						} else {
+							$arr[] = $this->getColumnName($c);
+						}
+					}
+					$sql .= implode(',', $arr);
+				} else {
+					$sql .= $this->getColumnName($limits['order']);
+				}
+			}
+
+			if (isset($limits['max'])) {
+				$limit = (int)$limits['max'];
+				if (isset($limits['offset'])) {
+					$limit = (int)$limits['offset'] . ',' . $limit;
+				}
+
+				$sql .= ' LIMIT ' . $limit;
+			}
+		}
+		
 		if ($all) {
 			return $this->db->getAll($sql, $finalParams);
 		} else {
@@ -558,13 +588,11 @@ class Sphorm {
 		}
 	}
 
-	//1st match
-	public function find(array $params) {
-		return $this->findGeneric($params, false);
+	public function find(array $params, $operator = '=') {
+		return $this->findGeneric($params, false, array(), $operator);
 	}
 
-	//all matches
-	public function findAll(array $params) {
-		return $this->findGeneric($params, true);
+	public function findAll(array $params, array $limits = array(), $operator = '=') {
+		return $this->findGeneric($params, true, $limits, $operator);
 	}
 }
