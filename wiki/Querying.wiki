@@ -7,10 +7,7 @@ Get all users (when we say all this means ALL of them):
 $users = User()->all();
 }}}
 
-Get all users with parameters:
- * max
- * order
- * offset
+Get all users with parameters: _max_, _order_, _offset_
 
 {{{
 // max 10
