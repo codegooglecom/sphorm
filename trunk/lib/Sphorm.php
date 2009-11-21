@@ -469,9 +469,13 @@ class Sphorm {
 	 *		'static' methods
 	 */
 
-	public function count() {
-		$sql = 'SELECT COUNT(*) as Total FROM ' . $this->table;
-		return $this->db->getOneField($sql, array(), 'Total');
+	public function count($params = array(), $operator = '=') {
+		if (empty($params)) {
+			$sql = 'SELECT COUNT(*) as Total FROM ' . $this->table;
+			return $this->db->getOneField($sql, array(), 'Total');
+		} else {
+			return $this->findGeneric($params, false, array(), $operator, true);
+		}
 	}
 
 	public function get() {
@@ -534,12 +538,20 @@ class Sphorm {
 	}
 
 	//used by other find* methods
-	private function findGeneric(array $params, $all, array $limits, $operator = '=') {
+	private function findGeneric(array $params, $all, array $limits, $operator = '=', $count = false) {
 		if (empty($params)) {
 			return null;
 		}
 
+		// just in case ;)
+		if (empty($operator)) {
+			$operator = '=';
+		}
+
 		$sql = 'SELECT * FROM ' . $this->table . ' WHERE ';
+		if ($count) {
+			$sql = 'SELECT COUNT(*) AS Total FROM ' . $this->table . ' WHERE ';
+		}
 
 		$finalParams = array();
 		foreach ($params as $key => $val) {
@@ -551,9 +563,9 @@ class Sphorm {
 		}
 
 		$sql = substr($sql, 0, -5);
-		
+
 		// TODO review this code.. duplicate from all()
-		if (!empty($limits)) {
+		if (!$count && !empty($limits)) {
 			if (isset($limits['order'])) {
 				$sql .= ' ORDER BY ';
 				if (is_array($limits['order'])) {
@@ -580,8 +592,10 @@ class Sphorm {
 				$sql .= ' LIMIT ' . $limit;
 			}
 		}
-		
-		if ($all) {
+
+		if ($count) {
+			return $this->db->getOneField($sql, $finalParams, 'Total');
+		} else if ($all) {
 			return $this->db->getAll($sql, $finalParams);
 		} else {
 			return $this->db->getOne($sql, $finalParams);
