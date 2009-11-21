@@ -13,9 +13,6 @@
  */
 class Beans {
 	static $beans = array (
-		'User',
-		'Profile',
-		'Address'
 	);
 }
 ?>

@@ -11,9 +11,9 @@ class DataSource {
 	);
 
 	static $development = array(
-		'schema' => 'phorm-demo',
+		'schema' => 'dev-db',
 		'username' => 'root',
-		'password' => '!123_x'
+		'password' => ''
 		);
 
 	static $test = array(
