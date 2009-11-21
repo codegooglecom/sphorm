@@ -14,11 +14,11 @@ class Db {
 			$this->pdoDb = new PDO($ds['engine'] . ':host=' . $ds['host'] . ';dbname=' . $ds['schema'], $ds['username'], $ds['password']);
 			$this->connected = true;
 		} catch (PDOException $ex) {
-			//TODO do something here...
+			throw new Exception('Could not connect to database.');
 		}
 	}
 
-	private function executePrepared($sql, $params) {
+	private function executePrepared($sql, $params = array()) {
 		if (!$this->connected) {
 			return null;
 		}
@@ -47,7 +47,7 @@ class Db {
 			echo '<hr>';
 		}
 	}
-
+	
 	public function getErrorInfo() {
 		return $this->pdoDb->errorInfo();
 	}
@@ -156,6 +156,11 @@ class Db {
 		
 		return $this->execute($sql);
 	}
-
+	
+	public function getMetaData() {
+		$sql = 'SHOW COLUMNS FROM ' . $this->table;
+		$sth = $this->executePrepared($sql);
+		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
 }
 ?>

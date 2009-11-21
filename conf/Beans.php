@@ -6,13 +6,16 @@
  * class Beans {
  * 	static $beans = array(
  * 		'User',
-		'Address',
-		'Profile'
+ *		'Address',
+ *	    'Profile'
  * 	);
  *
  */
 class Beans {
 	static $beans = array (
+		'User',
+		'Profile',
+		'Address'
 	);
 }
 ?>
