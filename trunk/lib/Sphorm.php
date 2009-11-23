@@ -18,11 +18,13 @@ class Sphorm {
 
 	private $errorMessages = array();
 
+	private $delete = false;
+
 	public function __construct($init = array()) {
 		$this->clazz = get_class($this);
 		$this->dirty = false;
 		$this->ds = DataSource::getSettings(SPHORM_ENV);
-
+			
 		if (!isset(self::$reflectors[$this->clazz])) {
 			self::$reflectors[$this->clazz] = new ReflectionClass($this->clazz);
 		}
@@ -50,7 +52,7 @@ class Sphorm {
 			throw new Exception('Undefined bean ' . $this->clazz . '. Please check Beans.php');
 		}
 
-		$this->db = new Db($this->ds, $this->clazz, $this->table, true);
+		$this->db = new Db($this->ds, $this->clazz, $this->table, false);
 
 		$this->createOrUpdateDbModel();
 	}
@@ -102,6 +104,11 @@ class Sphorm {
 		foreach ($this->data as $key => $val) {
 			$s .= $key . '=' . $val . "\n";
 		}
+
+		if ($this->delete) {
+			$s .= 'delete=true' . "\n";
+		}
+
 		return $s;
 	}
 
@@ -116,7 +123,39 @@ class Sphorm {
 	public function __call($name, $arguments) {
 		$pos = strpos($name, 'addTo');
 		if ($pos === false) {
-			throw new Exception('Unsupported operation: ' . $name);
+			$pos = strpos($name, 'removeFrom');
+			if ($pos === false) {
+				throw new Exception('Unsupported operation: ' . $name);
+			} else {
+				$propName = substr($name, 10);
+
+				$propNameLower = $propName;
+				$propNameLower{0} = strtolower($propNameLower{0});
+
+				if (!isset($this->data[$propName])) {
+					$propName = $propNameLower;
+				}
+
+				if (empty($arguments)) {
+					return;
+				}
+
+				if (count($arguments) > 1) {
+					throw new Exception('Multiple arguments are not supported yet.');
+				} else {
+					$id = $arguments[0];
+					$collection = $this->$propName;
+						
+					if (!empty($collection) && is_array($collection)) {
+						foreach ($collection as $item) {
+							if ($item->id == $id) {
+								$item->markToDelete();
+								$this->markAsDirty();
+							}
+						}
+					}
+				}
+			}
 		} else {
 			$propName = substr($name, 5);
 			//lcfirst is in 5.3
@@ -124,7 +163,7 @@ class Sphorm {
 			$propNameLower = $propName;
 			$propNameLower{0} = strtolower($propNameLower{0});
 
-			if (!isset($this->data[$propName]) && !isset($this->data[$propNameLower])) {
+			if (!isset($this->data[$propName])) {
 				$propName = $propNameLower;
 			}
 
@@ -153,6 +192,18 @@ class Sphorm {
 		$this->data[$name] = $value;
 	}
 
+	public function markToDelete() {
+		$this->delete = true;
+	}
+
+	public function isToDelete() {
+		return $this->delete;
+	}
+
+	public function markAsDirty() {
+		$this->dirty = true;
+	}
+	
 
 	/**
 	 *		Private
@@ -380,6 +431,7 @@ class Sphorm {
 		if (!empty($this->hasMany) && is_array($this->hasMany)) {
 			foreach ($this->hasMany as $key => $val) {
 				$children = $this->$key;
+
 				if ($children != null && is_array($children)) {
 					foreach ($children as $child) {
 						//add FK if not specified...
@@ -387,8 +439,13 @@ class Sphorm {
 						if (!isset($props[$val['join']])) {
 							$child->$val['join'] = $this->id;
 						}
-						//TODO check if was saved...
-						$child->save();
+
+						if ($child->isToDelete()) {
+							$child->delete();
+						} else {
+							//TODO check if was saved...
+							$child->save();
+						}
 					}
 				}
 			}
@@ -556,7 +613,7 @@ class Sphorm {
 		$finalParams = array();
 		foreach ($params as $key => $val) {
 			if (is_array($val)) {
-				throw new Exception('Multiple values not supported yet.');
+				throw new Exception('Multiple values not supported yet. Please use findBy* methods.');
 			}
 			$sql .= $this->getColumnName($key) . $operator . "? AND ";
 			$finalParams[] = $val;
