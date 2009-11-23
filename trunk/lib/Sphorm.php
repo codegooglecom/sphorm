@@ -140,18 +140,18 @@ class Sphorm {
 					return;
 				}
 
-				if (count($arguments) > 1) {
-					throw new Exception('Multiple arguments are not supported yet.');
-				} else {
-					$id = $arguments[0];
-					$collection = $this->$propName;
-						
-					if (!empty($collection) && is_array($collection)) {
-						foreach ($collection as $item) {
-							if ($item->id == $id) {
-								$item->markToDelete();
-								$this->markAsDirty();
-							}
+				$collection = $this->$propName;
+				if (!empty($collection) && is_array($collection)) {
+					$ids = $arguments;
+					if (count($arguments) == 1 && is_array($arguments[0])) {
+						$ids = $arguments[0];
+					}
+
+					$idsToDelete = array_flip($ids);
+					foreach ($collection as $item) {
+						if (isset($idsToDelete[$item->id])) {
+							$item->markToDelete();
+							$this->markAsDirty();
 						}
 					}
 				}
@@ -203,7 +203,7 @@ class Sphorm {
 	public function markAsDirty() {
 		$this->dirty = true;
 	}
-	
+
 
 	/**
 	 *		Private
