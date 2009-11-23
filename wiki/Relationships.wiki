@@ -53,6 +53,15 @@ $obj->addToAddresses($newAddr);
 $obj->addToAddresses(new Address(array('street' => 'New address')));
 }}}
 
+Remove an item from collection:
+{{{
+// for now only by Id is supported, we must know it 1st...
+$obj->removeFromAddresses(100);
+
+// obj has to be saved
+$obj->save();
+}}}
+
 = Requirements/Limitations =
  # In all cases brothers or children have to be Sphorm domain classes (extend Sphorm).
  # Brothers or childre are ALWAYS loaded lazy...aka they will be loaded on 1st access
