@@ -8,7 +8,7 @@
  * Unpack to a desirable directory (e.q. ~/public_html/sphorm).
  * (Optional) Define/change _SPHORM_HOME_ constant for a custom installation directory. Default is DOCUMENT_ROOT/sphorm.
  * Edit SPHORM_HOME/conf/DataSource.php 
- * List *all* your beans/classes to SPHORM_HOME/conf/Beans.php file. See a sample inside.
+ * List *all* your beans/classes in SPHORM_HOME/conf/Beans.php file. See a sample inside.
  * Copy *all* your domain classes to SPHORM_HOME/domains or define your own path using _SPHORM_DOMAIN_DIR_ constant.
  * *all* your domain classes should be 1 class per 1 file. By default file name should match class name. If you want custom file naming, change/define your own _SPHORM_DOMAIN_PATTERN_ constant. 
  * Check samples directory with for more examples.
