@@ -1,3 +1,6 @@
+sphorm 1.0.0.0-beta4 (released 2009-11-20)
+ - Fixed/added removeFrom* method. Which removed an item from a collection type of property. 
+ 
 sphorm 1.0.0.0-beta3 (released 2009-11-20)
  - Implemented count by parameters
  - Added max,order,offset params to findAll
