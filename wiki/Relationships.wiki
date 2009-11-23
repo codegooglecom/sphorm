@@ -42,6 +42,16 @@ static $hasMany = array(
 	);
 }}}
 
+To add new address use `addTo*` method:
+{{{
+$newAddr = new Address();
+$newAddr->street = 'New street';
+$obj->addToAddresses($newAddr);
+
+// or a shorter version
+
+$obj->addToAddresses(new Address(array('street' => 'New address')));
+}}}
 
 = Requirements/Limitations =
  # In all cases brothers or children have to be Sphorm domain classes (extend Sphorm).
