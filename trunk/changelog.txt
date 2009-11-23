@@ -1,4 +1,4 @@
-sphorm 1.0.0.0-beta4 (released 2009-11-20)
+sphorm 1.0.0.0-beta4 (released 2009-11-22)
  - Fixed/added removeFrom* method. Which removed an item from a collection type of property. 
  
 sphorm 1.0.0.0-beta3 (released 2009-11-20)
