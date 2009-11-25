@@ -49,7 +49,6 @@ $newAddr->street = 'New street';
 $obj->addToAddresses($newAddr);
 
 // or a shorter version
-
 $obj->addToAddresses(new Address(array('street' => 'New address')));
 
 // you can add multiple addresses at a time, a kind of addAll method...
@@ -60,11 +59,12 @@ Remove an item from collection:
 {{{
 // for now only by Id is supported, we must know address' id
 $obj->removeFromAddresses(100);
+
 // or multiple at once
 $obj->removeFromAddresses(100, 234);
+
 // or multiple at once
 $obj->removeFromAddresses(array(100, 234));
-
 
 // make changes permanent
 $obj->save();
