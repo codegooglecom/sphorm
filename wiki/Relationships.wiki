@@ -42,7 +42,7 @@ static $hasMany = array(
 	);
 }}}
 
-To add new address use `addTo*` method:
+To add address(es) use `addTo*` method:
 {{{
 $newAddr = new Address();
 $newAddr->street = 'New street';
