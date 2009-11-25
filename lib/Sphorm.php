@@ -121,60 +121,22 @@ class Sphorm {
 	}
 
 	public function __call($name, $arguments) {
-		$pos = strpos($name, 'addTo');
-		if ($pos === false) {
-			$pos = strpos($name, 'removeFrom');
-			if ($pos === false) {
-				throw new Exception('Unsupported operation: ' . $name);
+		$pattern = '/^findBy|countBy|addTo|removeFrom/';
+		preg_match($pattern, $name, $matches);
+		
+		if (!empty($matches)) {
+			$sysName = ucfirst($matches[0]);
+			$clazz = 'Call' . $sysName;
+			$path = SPHORM_HOME . '/lib/extra/' . $clazz . '.php';
+			if (file_exists($path)) {
+				include_once $path;
+				$obj = new $clazz($this, substr($name, strlen($sysName)), $arguments);
+				return $obj->call();
 			} else {
-				$propName = substr($name, 10);
-
-				$propNameLower = $propName;
-				$propNameLower{0} = strtolower($propNameLower{0});
-
-				if (!isset($this->data[$propName])) {
-					$propName = $propNameLower;
-				}
-
-				if (empty($arguments)) {
-					return;
-				}
-
-				$collection = $this->$propName;
-				if (!empty($collection) && is_array($collection)) {
-					$ids = $arguments;
-					if (count($arguments) == 1 && is_array($arguments[0])) {
-						$ids = $arguments[0];
-					}
-
-					$idsToDelete = array_flip($ids);
-					foreach ($collection as $item) {
-						if (isset($idsToDelete[$item->id])) {
-							$item->markToDelete();
-							$this->markAsDirty();
-						}
-					}
-				}
+				throw new Exception('Unsupported operation: ' . $name);
 			}
 		} else {
-			$propName = substr($name, 5);
-			//lcfirst is in 5.3
-			//$propNameLower = lcfirst($propName);
-			$propNameLower = $propName;
-			$propNameLower{0} = strtolower($propNameLower{0});
-
-			if (!isset($this->data[$propName])) {
-				$propName = $propNameLower;
-			}
-
-			//should load from db if needed...
-			$arr = $this->$propName;
-			if (!is_array($arr)) {
-				$arr = array();
-			}
-
-			$this->data[$propName] = array_merge($arr, $arguments);
-			$this->dirty = true;
+			throw new Exception('Unsupported operation: ' . $name);
 		}
 	}
 
