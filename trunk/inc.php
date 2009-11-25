@@ -24,6 +24,7 @@ require SPHORM_HOME . '/conf/Config.php';
 require SPHORM_HOME . '/conf/DataSource.php';
 require SPHORM_HOME . '/conf/Beans.php';
 require SPHORM_HOME . '/lib/Db.php';
+require SPHORM_HOME . '/lib/extra/AbstractCall.php';
 require SPHORM_HOME . '/lib/Sphorm.php';
 require SPHORM_HOME . '/lib/Debug.php';
 
