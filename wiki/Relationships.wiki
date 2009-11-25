@@ -63,7 +63,7 @@ $obj->removeFromAddresses(100);
 // or multiple at once
 $obj->removeFromAddresses(100, 234);
 
-// or multiple at once
+// or multiple at once v2
 $obj->removeFromAddresses(array(100, 234));
 
 // make changes permanent
