@@ -55,9 +55,9 @@ $obj->addToAddresses(new Address(array('street' => 'New address')));
 $obj->addToAddresses(array(new Address(...), new Address(...), etc..))
 }}}
 
-Remove an item from collection:
+Remove item(s) from collection by Id(s):
 {{{
-// for now only by Id is supported, we must know address' id
+// remove the address with id=100
 $obj->removeFromAddresses(100);
 
 // or multiple at once
