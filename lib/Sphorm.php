@@ -121,7 +121,7 @@ class Sphorm {
 	}
 
 	public function __call($name, $arguments) {
-		$pattern = '/^findBy|countBy|addTo|removeFrom/';
+		$pattern = '/^findBy|findAllBy|countBy|addTo|removeFrom/';
 		preg_match($pattern, $name, $matches);
 		
 		if (!empty($matches)) {
@@ -166,7 +166,14 @@ class Sphorm {
 		$this->dirty = true;
 	}
 
-
+	public function propertyIsMapped($propName) {
+		if (isset($this->mapping['columns'][$propName])) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	/**
 	 *		Private
 	 */
