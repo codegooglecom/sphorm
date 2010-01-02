@@ -22,8 +22,8 @@ class CallRemoveFrom extends AbstractCall {
 			$idsToDelete = array_flip($ids);
 			foreach ($collection as $item) {
 				if (isset($idsToDelete[$item->id])) {
-					$item->markToDelete();
-					$this->model->markAsDirty();
+					$item->markForDeletion();
+					$this->model->setDirty();
 				}
 			}
 			
