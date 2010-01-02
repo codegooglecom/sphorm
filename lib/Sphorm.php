@@ -123,7 +123,7 @@ class Sphorm {
 	public function __call($name, $arguments) {
 		$pattern = '/^findBy|findAllBy|countBy|addTo|removeFrom/';
 		preg_match($pattern, $name, $matches);
-		
+
 		if (!empty($matches)) {
 			$sysName = ucfirst($matches[0]);
 			$clazz = 'Call' . $sysName;
@@ -154,7 +154,7 @@ class Sphorm {
 		$this->data[$name] = $value;
 	}
 
-	public function markToDelete() {
+	public function markForDeletion() {
 		$this->delete = true;
 	}
 
@@ -162,18 +162,22 @@ class Sphorm {
 		return $this->delete;
 	}
 
-	public function markAsDirty() {
+	public function setDirty() {
 		$this->dirty = true;
+	}
+
+	public function clearDirty() {
+		$this->dirty = false;
 	}
 
 	public function propertyIsMapped($propName) {
 		if (isset($this->mapping['columns'][$propName])) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 *		Private
 	 */
@@ -500,7 +504,7 @@ class Sphorm {
 			$sql = 'SELECT COUNT(*) as Total FROM ' . $this->table;
 			return $this->db->getOneField($sql, array(), 'Total');
 		} else {
-			return $this->findGeneric($params, false, array(), $operator, true);
+			return $this->genericFind($params, false, array(), $operator, true);
 		}
 	}
 
@@ -564,7 +568,7 @@ class Sphorm {
 	}
 
 	//used by other find* methods
-	private function findGeneric(array $params, $all, array $limits, $operator = '=', $count = false) {
+	private function genericFind(array $params, $all, array $limits, $operator = '=', $count = false) {
 		if (empty($params)) {
 			return null;
 		}
@@ -629,10 +633,14 @@ class Sphorm {
 	}
 
 	public function find(array $params, $operator = '=') {
-		return $this->findGeneric($params, false, array(), $operator);
+		return $this->genericFind($params, false, array(), $operator);
 	}
 
 	public function findAll(array $params, array $limits = array(), $operator = '=') {
-		return $this->findGeneric($params, true, $limits, $operator);
+		return $this->genericFind($params, true, $limits, $operator);
+	}
+
+	public function executeQuery($sql, $params = array()) {
+		return $this->db->getAllAsArray($sql, $params);
 	}
 }

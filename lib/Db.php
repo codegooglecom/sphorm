@@ -47,7 +47,7 @@ class Db {
 			echo '<hr>';
 		}
 	}
-	
+
 	public function getErrorInfo() {
 		return $this->pdoDb->errorInfo();
 	}
@@ -68,19 +68,25 @@ class Db {
 		return $objects;
 	}
 
+	public function getAllAsArray($sql, $params = array()) {
+		$sth = $this->executePrepared($sql, $params);
+		$results = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $results;
+	}
+
 	public function getOne($sql, $params) {
 		$sth = $this->executePrepared($sql . ' LIMIT 1', $params);
 		$row = $sth->fetch(PDO::FETCH_ASSOC);
-		
+
 		if (empty($row)) {
 			return null;
 		}
-		
+
 		$obj = new $this->clazz();
 		foreach ($row as $column => $val) {
 			$obj->setWithColumnCheck($column, $val);
 		}
-		
+
 		return $obj;
 	}
 
@@ -110,53 +116,53 @@ class Db {
 			return true;
 		}
 	}
-	
+
 	public function dropTable() {
 		return $this->execute('DROP TABLE IF EXISTS ' . $this->table);
 	}
-	
+
 	public function createTable(array $id, array $columns, array $index = array()) {
 		if (empty($columns) || empty($id)) {
 			trigger_error('id or columns data is empty, cannot create table.', E_USER_WARNING);
 			return;
 		}
-	
+
 		$sql = 'CREATE TABLE ' . $this->table . ' (';
 		$sql .= $id['name'] . ' int(11) NOT NULL AUTO_INCREMENT,';
-		
+
 		foreach ($columns as $c) {
 			if (!isset($c['name'])) {
 				throw new Exception('No column name specified, cannot create table.');
 			}
-			
+				
 			$type = 'VARCHAR(255)';
 			$nullable = '';
 			$default = '';
-			
+				
 			if (isset($c['type'])) {
 				$type = $c['type'];
 			}
-			
+				
 			if (isset($c['nullable'])) {
 				if ($c['nullable'] === false) {
 					$nullable = 'NOT NULL';
-				} 
+				}
 			}
-			
+				
 			if (isset($c['default'])) {
 				$default = $c['default'];
 			}
-			
+				
 			//check for int's default value
-			
+				
 			$sql .= $c['name'] . ' ' . $type . ' ' . $nullable . ' DEFAULT ' . "'" . $default . "',";
 		}
 		$sql .= 'PRIMARY KEY (' . $id['name'] .')';
 		$sql .= ') ENGINE=MyISAM DEFAULT CHARSET=utf8';
-		
+
 		return $this->execute($sql);
 	}
-	
+
 	public function getMetaData() {
 		$sql = 'SHOW COLUMNS FROM ' . $this->table;
 		$sth = $this->executePrepared($sql);
