@@ -234,6 +234,10 @@ class Sphorm {
 					eval('function ' . $clazz . '() {return Sphorm::getStaticEntity("' . $clazz . '");}');
 				}
 			}
+				
+			if (!function_exists('SphormQuery')) {
+				eval('function SphormQuery() {return Sphorm::getStaticEntity("SphormQuery");}');
+			}
 		} else {
 			trigger_error('No beans where defined', E_USER_WARNING);
 		}
