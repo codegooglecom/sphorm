@@ -62,5 +62,6 @@ $users = User()->findAll(array('name' => 'Test'), array('max' => 4, 'offset' => 
 
 Generic queries, that Sphorm cannot handle yet
 {{{
+// will return an asocciative array, aka old style fetching...
 $recs = SphormQuery()->execute('select UID, count(*) nrImgs, sum(ConvertTime) total, max(ConvertTime) maxTime from logs group by UID order by LogId desc');
 }}}
