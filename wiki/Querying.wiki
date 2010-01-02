@@ -59,3 +59,8 @@ $foundUsers = User()->findAll(array('name'=>'John', ...));
 // all matches with parameters (same as for all)
 $users = User()->findAll(array('name' => 'Test'), array('max' => 4, 'offset' => 2, 'order' => array ('desc' => 'id')));
 }}}
+
+Generic queries, that Sphorm cannot handle yet
+{{{
+$recs = SphormQuery()->execute('select UID, count(*) nrImgs, sum(ConvertTime) total, max(ConvertTime) maxTime from logs group by UID order by LogId desc');
+}}}
